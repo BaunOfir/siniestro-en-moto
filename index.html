@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Expositor de cartas</title>
+<title>Cartas Editables</title>
 
 <style>
 
@@ -66,6 +66,7 @@ body{
 
 /* HOVER */
 .carta:hover:not(.activa){
+
     transform:
         rotateY(360deg)
         scale(1.12);
@@ -73,7 +74,7 @@ body{
     z-index:10;
 }
 
-/* CUANDO ESTÁ ABIERTA */
+/* CARTA ABIERTA */
 .carta.activa{
 
     position:fixed;
@@ -85,18 +86,21 @@ body{
     height:550px;
 
     transform:
-        translate(-50%, -50%)
-        scale(1);
+        translate(-50%, -50%);
 
     z-index:9999;
 
     animation:giro 0.8s ease;
+
+    box-shadow:
+        0 25px 70px rgba(0,0,0,0.8);
 }
 
 /* ANIMACION */
 @keyframes giro{
 
     from{
+
         transform:
             translate(-50%, -50%)
             rotateY(0deg)
@@ -104,6 +108,7 @@ body{
     }
 
     to{
+
         transform:
             translate(-50%, -50%)
             rotateY(360deg)
@@ -130,10 +135,12 @@ body{
         0 15px 40px rgba(0,0,0,0.5);
 }
 
-/* FRENTE */
+/* IMAGEN */
 .frente img{
+
     width:100%;
     height:100%;
+
     object-fit:cover;
 }
 
@@ -143,8 +150,8 @@ body{
     background:
         linear-gradient(
             135deg,
-            #7c3aed,
-            #2563eb
+            #f33929,
+            #f33929
         );
 
     transform:rotateY(180deg);
@@ -236,15 +243,185 @@ body{
 
 <script>
 
-const nombres = [
-    "Dragón","Guerrero","Mago","Lobo","Fuego",
-    "Hielo","Bosque","Rayo","Océano","Sombra",
-    "Ángel","Demonio","Titán","Bestia","Rey"
+/* ======================================
+   CARTAS DEL MAZO 1
+====================================== */
+
+const mazo1Cartas = [
+
+{
+    nombre: "",
+    imagen: "cartas/acusador/equipo/casco.jpeg"
+},
+
+{
+    nombre: "Guerrero",
+    imagen: "img/guerrero.jpg"
+},
+
+{
+    nombre: "Mago",
+    imagen: "img/mago.jpg"
+},
+
+{
+    nombre: "Lobo",
+    imagen: "img/lobo.jpg"
+},
+
+{
+    nombre: "Fuego",
+    imagen: "img/fuego.jpg"
+},
+
+{
+    nombre: "Hielo",
+    imagen: "img/hielo.jpg"
+},
+
+{
+    nombre: "Bosque",
+    imagen: "img/bosque.jpg"
+},
+
+{
+    nombre: "Rayo",
+    imagen: "img/rayo.jpg"
+},
+
+{
+    nombre: "Océano",
+    imagen: "img/oceano.jpg"
+},
+
+{
+    nombre: "Sombra",
+    imagen: "img/sombra.jpg"
+},
+
+{
+    nombre: "Ángel",
+    imagen: "img/angel.jpg"
+},
+
+{
+    nombre: "Demonio",
+    imagen: "img/demonio.jpg"
+},
+
+{
+    nombre: "Titán",
+    imagen: "img/titan.jpg"
+},
+
+{
+    nombre: "Bestia",
+    imagen: "img/bestia.jpg"
+},
+
+{
+    nombre: "Rey",
+    imagen: "img/rey.jpg"
+}
+
 ];
+
+
+/* ======================================
+   CARTAS DEL MAZO 2
+====================================== */
+
+const mazo2Cartas = [
+
+{
+    nombre: "Samurai",
+    imagen: "img/samurai.jpg"
+},
+
+{
+    nombre: "Bruja",
+    imagen: "img/bruja.jpg"
+},
+
+{
+    nombre: "Fantasma",
+    imagen: "img/fantasma.jpg"
+},
+
+{
+    nombre: "Caballero",
+    imagen: "img/caballero.jpg"
+},
+
+{
+    nombre: "Volcán",
+    imagen: "img/volcan.jpg"
+},
+
+{
+    nombre: "Tornado",
+    imagen: "img/tornado.jpg"
+},
+
+{
+    nombre: "Veneno",
+    imagen: "img/veneno.jpg"
+},
+
+{
+    nombre: "Robot",
+    imagen: "img/robot.jpg"
+},
+
+{
+    nombre: "Alien",
+    imagen: "img/alien.jpg"
+},
+
+{
+    nombre: "Pirata",
+    imagen: "img/pirata.jpg"
+},
+
+{
+    nombre: "Ninja",
+    imagen: "img/ninja.jpg"
+},
+
+{
+    nombre: "León",
+    imagen: "img/leon.jpg"
+},
+
+{
+    nombre: "Tigre",
+    imagen: "img/tigre.jpg"
+},
+
+{
+    nombre: "Kraken",
+    imagen: "img/kraken.jpg"
+},
+
+{
+    nombre: "Fénix",
+    imagen: "img/fenix.jpg"
+}
+
+];
+
+
+/* ======================================
+   OVERLAY
+====================================== */
 
 const overlay = document.getElementById("overlay");
 
-/* CERRAR CARTAS */
+
+/* ======================================
+   CERRAR CARTAS
+====================================== */
+
 function cerrarCartas(){
 
     document.querySelectorAll(".carta").forEach(c => {
@@ -258,12 +435,16 @@ function cerrarCartas(){
 
 overlay.addEventListener("click", cerrarCartas);
 
-/* CREAR MAZOS */
-function crearMazo(id, base){
+
+/* ======================================
+   CREAR MAZO
+====================================== */
+
+function crearMazo(id, cartas){
 
     const mazo = document.getElementById(id);
 
-    for(let i=0; i<15; i++){
+    cartas.forEach(dato => {
 
         const wrapper = document.createElement("div");
 
@@ -277,16 +458,16 @@ function crearMazo(id, base){
 
             <div class="frente">
 
-                <img src="https://picsum.photos/400/600?random=${base+i}">
+                <img src="${dato.imagen}">
 
                 <div class="nombre">
-                    ${nombres[i]}
+                    ${dato.nombre}
                 </div>
 
             </div>
 
             <div class="atras">
-                ${nombres[i]}
+                ${dato.nombre}
             </div>
 
         `;
@@ -296,7 +477,8 @@ function crearMazo(id, base){
 
             e.stopPropagation();
 
-            const abierta = carta.classList.contains("activa");
+            const abierta =
+                carta.classList.contains("activa");
 
             cerrarCartas();
 
@@ -311,12 +493,17 @@ function crearMazo(id, base){
         wrapper.appendChild(carta);
 
         mazo.appendChild(wrapper);
-    }
+    });
 }
 
-crearMazo("mazo1",1);
 
-crearMazo("mazo2",100);
+/* ======================================
+   CREAR LOS DOS MAZOS
+====================================== */
+
+crearMazo("mazo1", mazo1Cartas);
+
+crearMazo("mazo2", mazo2Cartas);
 
 </script>
 
