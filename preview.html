@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cartas Mejoradas</title>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    background:#020817;
+    font-family:Arial, Helvetica, sans-serif;
+    color:white;
+    padding:40px;
+    overflow-x:hidden;
+}
+
+/* TABLERO */
+.tablero{
+    display:flex;
+    flex-direction:column;
+    gap:120px;
+    align-items:center;
+}
+
+/* TITULO */
+.titulo{
+    text-align:center;
+    font-size:42px;
+    margin-bottom:40px;
+}
+
+/* MAZO */
+.mazo{
+    display:grid;
+    grid-template-columns:repeat(5, 220px);
+    gap:25px;
+}
+
+/* WRAPPER */
+.carta-wrapper{
+    perspective:1200px;
+}
+
+/* CARTA */
+.carta{
+    width:220px;
+    height:320px;
+
+    position:relative;
+
+    transform-style:preserve-3d;
+
+    transition:
+        transform 0.7s ease,
+        box-shadow 0.4s ease;
+
+    cursor:pointer;
+}
+
+/* HOVER */
+.carta:hover:not(.activa){
+    transform:
+        rotateY(360deg)
+        scale(1.12);
+
+    z-index:10;
+}
+
+/* CUANDO ESTÁ ABIERTA */
+.carta.activa{
+
+    position:fixed;
+
+    left:50%;
+    top:50%;
+
+    width:380px;
+    height:550px;
+
+    transform:
+        translate(-50%, -50%)
+        scale(1);
+
+    z-index:9999;
+
+    animation:giro 0.8s ease;
+}
+
+/* ANIMACION */
+@keyframes giro{
+
+    from{
+        transform:
+            translate(-50%, -50%)
+            rotateY(0deg)
+            scale(0.5);
+    }
+
+    to{
+        transform:
+            translate(-50%, -50%)
+            rotateY(360deg)
+            scale(1);
+    }
+}
+
+/* FRENTE Y ATRAS */
+.frente,
+.atras{
+
+    position:absolute;
+
+    width:100%;
+    height:100%;
+
+    border-radius:18px;
+
+    overflow:hidden;
+
+    backface-visibility:hidden;
+
+    box-shadow:
+        0 15px 40px rgba(0,0,0,0.5);
+}
+
+/* FRENTE */
+.frente img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+}
+
+/* ATRAS */
+.atras{
+
+    background:
+        linear-gradient(
+            135deg,
+            #7c3aed,
+            #2563eb
+        );
+
+    transform:rotateY(180deg);
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    font-size:30px;
+    font-weight:bold;
+}
+
+/* NOMBRE */
+.nombre{
+
+    position:absolute;
+
+    bottom:0;
+
+    width:100%;
+
+    padding:14px;
+
+    text-align:center;
+
+    font-size:22px;
+    font-weight:bold;
+
+    background:
+        linear-gradient(
+            transparent,
+            rgba(0,0,0,0.9)
+        );
+}
+
+/* OVERLAY */
+.overlay{
+
+    position:fixed;
+
+    inset:0;
+
+    background:rgba(0,0,0,0.75);
+
+    opacity:0;
+
+    pointer-events:none;
+
+    transition:0.3s;
+
+    z-index:9990;
+}
+
+.overlay.visible{
+
+    opacity:1;
+
+    pointer-events:all;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="overlay" id="overlay"></div>
+
+<div class="tablero">
+
+    <!-- MAZO 1 -->
+    <div>
+
+        <div class="titulo">MAZO 1</div>
+
+        <div class="mazo" id="mazo1"></div>
+
+    </div>
+
+    <!-- MAZO 2 -->
+    <div>
+
+        <div class="titulo">MAZO 2</div>
+
+        <div class="mazo" id="mazo2"></div>
+
+    </div>
+
+</div>
+
+<script>
+
+const nombres = [
+    "Dragón","Guerrero","Mago","Lobo","Fuego",
+    "Hielo","Bosque","Rayo","Océano","Sombra",
+    "Ángel","Demonio","Titán","Bestia","Rey"
+];
+
+const overlay = document.getElementById("overlay");
+
+/* CERRAR CARTAS */
+function cerrarCartas(){
+
+    document.querySelectorAll(".carta").forEach(c => {
+
+        c.classList.remove("activa");
+
+    });
+
+    overlay.classList.remove("visible");
+}
+
+overlay.addEventListener("click", cerrarCartas);
+
+/* CREAR MAZOS */
+function crearMazo(id, base){
+
+    const mazo = document.getElementById(id);
+
+    for(let i=0; i<15; i++){
+
+        const wrapper = document.createElement("div");
+
+        wrapper.classList.add("carta-wrapper");
+
+        const carta = document.createElement("div");
+
+        carta.classList.add("carta");
+
+        carta.innerHTML = `
+
+            <div class="frente">
+
+                <img src="https://picsum.photos/400/600?random=${base+i}">
+
+                <div class="nombre">
+                    ${nombres[i]}
+                </div>
+
+            </div>
+
+            <div class="atras">
+                ${nombres[i]}
+            </div>
+
+        `;
+
+        /* CLICK */
+        carta.addEventListener("click", (e) => {
+
+            e.stopPropagation();
+
+            const abierta = carta.classList.contains("activa");
+
+            cerrarCartas();
+
+            if(!abierta){
+
+                carta.classList.add("activa");
+
+                overlay.classList.add("visible");
+            }
+        });
+
+        wrapper.appendChild(carta);
+
+        mazo.appendChild(wrapper);
+    }
+}
+
+crearMazo("mazo1",1);
+
+crearMazo("mazo2",100);
+
+</script>
+
+</body>
+</html>
